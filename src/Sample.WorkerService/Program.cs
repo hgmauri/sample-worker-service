@@ -1,19 +1,30 @@
+using MassTransit;
 using Sample.WorkerService.Core.Extensions;
 using Sample.WorkerService.Workers;
 using Serilog;
 
 SerilogExtension.AddSerilog();
+
 try
 {
     Log.Information("Starting host");
     var host = Host.CreateDefaultBuilder(args)
-        .ConfigureServices(services =>
+        .ConfigureServices((hostContext, services) =>
         {
-            services.AddCronJob<TimerJob>(c =>
+            services.AddMassTransit(x =>
             {
-                c.TimeZoneInfo = TimeZoneInfo.Local;
-                c.CronExpression = @"*/1 * * * *";
+                x.AddConsumer<QueueClientSaved>();
+                x.AddConsumer<QueueSendEmail>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(hostContext.Configuration.GetConnectionString("RabbitMq"));
+                    cfg.ConfigureEndpoints(context);
+                });
             });
+            services.AddMassTransitHostedService(true);
+
+            services.AddCronJob<TimerJob>(c => c.CronExpression = @"*/1 * * * *");
         })
         .UseSerilog()
         .Build();

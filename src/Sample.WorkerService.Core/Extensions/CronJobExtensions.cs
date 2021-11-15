@@ -1,12 +1,13 @@
 ﻿using Cronos;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Timer = System.Timers.Timer;
 
 namespace Sample.WorkerService.Core.Extensions;
 
 public abstract class CronJobExtensions : IHostedService, IDisposable
 {
-    private System.Timers.Timer _timer;
+    private Timer? _timer;
     private readonly CronExpression _expression;
     private readonly TimeZoneInfo _timeZoneInfo;
 
@@ -86,7 +87,7 @@ public interface IScheduleConfig<T>
 public class ScheduleConfig<T> : IScheduleConfig<T>
 {
     public string? CronExpression { get; set; }
-    public TimeZoneInfo? TimeZoneInfo { get; set; }
+    public TimeZoneInfo? TimeZoneInfo { get; set; } = TimeZoneInfo.Local;
 }
 
 public static class ScheduledServiceExtensions
