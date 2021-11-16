@@ -17,7 +17,7 @@ public class ClientController : ControllerBase
         _publishEndpoint = publishEndpoint;
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<IActionResult> PostClient([FromBody] ClientSavedEvent client)
     {
         await _publishEndpoint.Publish(client);

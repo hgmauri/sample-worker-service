@@ -14,7 +14,7 @@ public class QueueClientSaved : IConsumer<ClientSavedEvent>
 
     public Task Consume(ConsumeContext<ClientSavedEvent> context)
     {
-        _logger.LogInformation("Received Client: {Text}", context.Message.Name);
+        _logger.LogInformation($"Received Client: {context.Message.Name}");
 
         return Task.CompletedTask;
     }
