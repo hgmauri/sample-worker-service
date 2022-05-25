@@ -8,6 +8,7 @@ SerilogExtension.AddSerilog();
 try
 {
     Log.Information("Starting host");
+
     var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
@@ -22,7 +23,6 @@ try
                     cfg.ConfigureEndpoints(context);
                 });
             });
-            services.AddMassTransitHostedService(true);
 
             services.AddCronJob<TimerJob>(c => c.CronExpression = @"*/1 * * * *");
         })
@@ -30,11 +30,13 @@ try
         .Build();
 
     await host.RunAsync();
+
     return 0;
 }
 catch (Exception ex)
 {
     Log.Fatal(ex, "Host terminated unexpectedly");
+
     return 1;
 }
 finally

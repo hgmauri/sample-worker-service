@@ -5,7 +5,7 @@ namespace Sample.WorkerService.Workers;
 
 public class QueueClientSaved : IConsumer<ClientSavedEvent>
 {
-    readonly ILogger<QueueClientSaved> _logger;
+    private readonly ILogger<QueueClientSaved> _logger;
 
     public QueueClientSaved(ILogger<QueueClientSaved> logger)
     {

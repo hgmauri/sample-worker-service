@@ -15,6 +15,12 @@ public static class MassTransitExtension
                 busConfigurator.Host(configuration.GetConnectionString("RabbitMq"));
             });
         });
-        services.AddMassTransitHostedService();
+
+        services.Configure<MassTransitHostOptions>(options =>
+        {
+            options.WaitUntilStarted = true;
+            options.StartTimeout = TimeSpan.FromSeconds(30);
+            options.StopTimeout = TimeSpan.FromMinutes(1);
+        });
     }
 }

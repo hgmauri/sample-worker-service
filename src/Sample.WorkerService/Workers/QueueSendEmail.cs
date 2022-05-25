@@ -5,7 +5,7 @@ namespace Sample.WorkerService.Workers;
 
 public class QueueSendEmail : IConsumer<ClientSavedEvent>
 {
-    readonly ILogger<QueueSendEmail> _logger;
+    private readonly ILogger<QueueSendEmail> _logger;
 
     public QueueSendEmail(ILogger<QueueSendEmail> logger)
     {

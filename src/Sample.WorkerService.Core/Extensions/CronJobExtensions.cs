@@ -33,14 +33,18 @@ public abstract class CronJobExtensions : IHostedService, IDisposable
     protected virtual async Task ScheduleJob(CancellationToken cancellationToken)
     {
         var next = _expression.GetNextOccurrence(DateTimeOffset.Now, _timeZoneInfo);
+
         if (next.HasValue)
         {
             var delay = next.Value - DateTimeOffset.Now;
+
             if (delay.TotalMilliseconds <= 0)
             {
                 await ScheduleJob(cancellationToken);
             }
-            _timer = new System.Timers.Timer(delay.TotalMilliseconds);
+
+            _timer = new Timer(delay.TotalMilliseconds);
+
             _timer.Elapsed += async (sender, args) =>
             {
                 _timer.Dispose();
@@ -58,6 +62,7 @@ public abstract class CronJobExtensions : IHostedService, IDisposable
             };
             _timer.Start();
         }
+
         await Task.CompletedTask;
     }
 
@@ -98,8 +103,10 @@ public static class ScheduledServiceExtensions
         {
             throw new ArgumentNullException(nameof(options), @"Please provide Schedule Configurations.");
         }
+
         var config = new ScheduleConfig<T>();
         options.Invoke(config);
+
         if (string.IsNullOrWhiteSpace(config.CronExpression))
         {
             throw new ArgumentNullException(nameof(ScheduleConfig<T>.CronExpression), @"Empty Cron Expression is not allowed.");
@@ -107,6 +114,7 @@ public static class ScheduledServiceExtensions
 
         services.AddSingleton<IScheduleConfig<T>>(config);
         services.AddHostedService<T>();
+
         return services;
     }
 }
